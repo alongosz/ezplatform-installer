@@ -10,6 +10,9 @@
             "EzSystems\\EzPlatformInstaller\\": "src/lib"
         }
     },
+    "require": {
+        "symfony/http-kernel": "^3.3"
+    },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "~2.7.1"
     },

@@ -12,7 +12,8 @@
     },
     "require": {
         "php": "^7.1",
-        "symfony/http-kernel": "^3.3"
+        "symfony/symfony": "^3.4@rc",
+        "ezsystems/ezpublish-kernel": "^7.0@dev"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "~2.7.1"

@@ -10,6 +10,12 @@
             "EzSystems\\EzPlatformInstaller\\": "src/lib"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "EzSystems\\Tests\\EzPlatformInstallerBundle\\": "src/tests/bundle",
+            "EzSystems\\Tests\\EzPlatformInstaller\\": "src/tests/lib"
+        }
+    },
     "require": {
         "php": "^7.1",
         "symfony/http-kernel": "^3.4",
@@ -20,6 +26,7 @@
         "ezsystems/doctrine-dbal-schema": "^0.1@dev"
     },
     "require-dev": {
+        "phpunit/phpunit": "^7.5",
         "friendsofphp/php-cs-fixer": "^2.14"
     },
     "scripts": {

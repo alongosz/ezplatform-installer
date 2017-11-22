@@ -1,0 +1,10 @@
+<phpunit bootstrap="vendor/autoload.php">
+    <php>
+        <env name="DATABASE" value="sqlite://:memory:"/>
+    </php>
+    <testsuites>
+        <testsuite name="bundle">
+            <directory>src/tests/bundle</directory>
+        </testsuite>
+    </testsuites>
+</phpunit>

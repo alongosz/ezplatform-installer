@@ -1,0 +1,14 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    _instanceof:
+        EzSystems\EzPlatformInstaller\SPI\Installer\Adapter:
+            tags: ['ezplatform.installer']
+
+    EzSystems\EzPlatformInstaller\Core\Installer\Adapter\CleanInstallerAdapter: ~
+
+    EzSystems\EzPlatformInstaller\Core\Installer\CoreInstaller:
+        arguments: [!tagged ezplatform.installer]

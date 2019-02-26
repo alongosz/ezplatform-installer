@@ -8,7 +8,4 @@ services:
         EzSystems\EzPlatformInstaller\SPI\Installer\Adapter:
             tags: ['ezplatform.installer']
 
-    EzSystems\EzPlatformInstaller\Core\Installer\Adapter\CleanInstallerAdapter: ~
-
-    EzSystems\EzPlatformInstaller\Core\Installer\CoreInstaller:
-        arguments: [!tagged ezplatform.installer]
+    EzSystems\EzPlatformInstaller\API\Installer: '@EzSystems\EzPlatformInstaller\Core\Installer\CoreInstaller'

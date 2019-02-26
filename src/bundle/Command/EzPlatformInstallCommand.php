@@ -5,8 +5,10 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  */
 declare(strict_types=1);
+
 namespace EzSystems\EzPlatformInstallerBundle\Command;
 
+use Doctrine\DBAL\Connection;
 use eZ\Publish\Core\Base\Exceptions\InvalidArgumentException;
 use EzSystems\EzPlatformInstaller\API\Installer;
 use Symfony\Component\Console\Command\Command;
@@ -24,6 +26,12 @@ use Symfony\Component\HttpKernel\CacheClearer\CacheClearerInterface;
  */
 class EzPlatformInstallCommand extends Command
 {
+    const EXIT_DATABASE_NOT_FOUND_ERROR = 3;
+    const EXIT_GENERAL_DATABASE_ERROR = 4;
+    const EXIT_PARAMETERS_NOT_FOUND = 5;
+    const EXIT_MISSING_PERMISSIONS = 6;
+    const EXIT_CANCELLED = 7;
+
     /**
      * @var \Symfony\Component\HttpKernel\CacheClearer\CacheClearerInterface
      */
@@ -34,16 +42,15 @@ class EzPlatformInstallCommand extends Command
      */
     private $cacheDir;
 
-    const EXIT_DATABASE_NOT_FOUND_ERROR = 3;
-
-    const EXIT_GENERAL_DATABASE_ERROR = 4;
-    const EXIT_PARAMETERS_NOT_FOUND = 5;
-    const EXIT_MISSING_PERMISSIONS = 7;
-
     /**
      * @var \EzSystems\EzPlatformInstaller\API\Installer
      */
     private $installer;
+
+    /**
+     * @var \Doctrine\DBAL\Connection
+     */
+    private $connection;
 
     /**
      * @var \Symfony\Component\Console\Output\OutputInterface
@@ -57,10 +64,12 @@ class EzPlatformInstallCommand extends Command
 
     public function __construct(
         Installer $installer,
+        Connection $connection,
         CacheClearerInterface $cacheClearer,
         $cacheDir
     ) {
         $this->installer = $installer;
+        $this->connection = $connection;
         $this->cacheClearer = $cacheClearer;
         $this->cacheDir = $cacheDir;
 
@@ -69,6 +78,8 @@ class EzPlatformInstallCommand extends Command
 
     protected function configure()
     {
+        $availableInstallers = $this->installer->getAvailableAdapters();
+
         $this
             ->setName('ezplatform:install')
             ->setDescription('eZ Platform Installer')
@@ -77,8 +88,9 @@ class EzPlatformInstallCommand extends Command
                 InputArgument::REQUIRED,
                 sprintf(
                     'The type of install. Available Installers: %s',
-                    implode(', ', $this->installer->getAvailableAdapters())
-                )
+                    implode(', ', $availableInstallers)
+                ),
+                'clean'
             );
     }
 
@@ -89,13 +101,29 @@ class EzPlatformInstallCommand extends Command
         $this->output = $output;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    /**
+     * @param \Symfony\Component\Console\Input\InputInterface $input
+     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     *
+     * @return int
+     *
+     * @throws \Doctrine\DBAL\DBALException
+     */
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->checkPermissions();
         $this->checkParametersFile();
 
+        $database = $this->connection->getDatabase();
+        $databasePlatform = $this->connection->getDatabasePlatform();
+        $this->output->writeln('');
+        if (!$this->confirm(
+            "You are about to install eZ Platform using '<info>{$database}</info>' <comment>{$databasePlatform->getName()}</comment> database. Would you like to continue[y/N]? "
+        )) {
+            return self::EXIT_CANCELLED;
+        }
+
         $type = $input->getArgument('type');
-        $this->output->writeln("Installing eZ Platform using <info>{$type}</info> Installer");
         $this->installer->install($type);
         $this->cacheClear();
     }
@@ -169,6 +197,10 @@ class EzPlatformInstallCommand extends Command
      */
     private function confirm($text): bool
     {
+        if (!$this->input->isInteractive()) {
+            return true;
+        }
+
         /** @var \Symfony\Component\Console\Helper\QuestionHelper $questionHelper */
         $questionHelper = $this->getHelper('question');
         $question = new ConfirmationQuestion($text);

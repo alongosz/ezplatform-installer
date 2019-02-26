@@ -1,0 +1,15 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    EzSystems\EzPlatformInstaller\Core\Installer\Adapter\CleanInstallerAdapter: ~
+
+    EzSystems\EzPlatformInstaller\Core\Installer\CoreInstaller:
+        arguments: [!tagged ezplatform.installer]
+
+    EzSystems\EzPlatformInstallerBundle\Command\EzPlatformInstallCommand:
+        arguments:
+            $cacheDir: '%kernel.cache_dir%'
+            $cacheClearer: '@cache_clearer'

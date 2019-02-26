@@ -4,6 +4,8 @@
  * @copyright Copyright (C) eZ Systems AS. All rights reserved.
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  */
+declare(strict_types=1);
+
 namespace EzSystems\EzPlatformInstaller\Core\Installer;
 
 use EzSystems\EzPlatformInstaller\API\Installer;
@@ -23,6 +25,8 @@ class CoreInstaller implements Installer
 
     /**
      * @param \Traversable|\EzSystems\EzPlatformInstaller\SPI\Installer\Adapter[] $adapters
+     *
+     * @throws \eZ\Publish\API\Repository\Exceptions\InvalidArgumentException
      */
     public function __construct(Traversable $adapters)
     {
@@ -37,7 +41,7 @@ class CoreInstaller implements Installer
      */
     public function install(string $adapterName): void
     {
-        if (!array_key_exists($adapterName, $this->adapters)) {
+        if (!\array_key_exists($adapterName, $this->adapters)) {
             throw new InvalidArgumentException(
                 '$adapterName',
                 sprintf(
@@ -72,13 +76,13 @@ class CoreInstaller implements Installer
     private function getAdapterName(Adapter $adapter): string
     {
         $adapterName = $adapter->getName();
-        if (array_key_exists($adapterName, $this->adapters)) {
+        if (\array_key_exists($adapterName, $this->adapters)) {
             throw new InvalidArgumentException(
                 '$adapters',
                 sprintf(
                     'The Adapter "%s" is already implemented by %s',
                     $adapterName,
-                    get_class($this->adapters[$adapterName])
+                    \get_class($this->adapters[$adapterName])
                 )
             );
         }

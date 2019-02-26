@@ -8,6 +8,7 @@ declare(strict_types=1);
 namespace EzSystems\EzPlatformInstallerBundle\DependencyInjection;
 
 use Symfony\Component\Config\FileLocator;
+use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
@@ -17,21 +18,29 @@ use Symfony\Component\HttpKernel\DependencyInjection\Extension;
  */
 class EzPlatformInstallerExtension extends Extension
 {
+    /**
+     * Load EzPlatformInstallerBundle configuration.
+     *
+     * @param array $configs
+     * @param \Symfony\Component\DependencyInjection\ContainerBuilder $container
+     *
+     * @throws \Exception
+     */
     public function load(array $configs, ContainerBuilder $container)
     {
-        $this->loadCoreServices($container);
-        $this->loadBundleServices($container);
-    }
+        $loader = new Loader\YamlFileLoader(
+            $container,
+            new FileLocator(__DIR__ . '/../Resources/config/services')
+        );
 
-    private function loadCoreServices($container): void
-    {
-        $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__ . '/../../lib/Core/Resources/config'));
-        $loader->load('services.yml');
-    }
+        $loader->load('core.yaml');
+        $container->addResource(
+            new FileResource(__DIR__ . '/../Resources/config/services/core.yaml')
+        );
 
-    private function loadBundleServices($container): void
-    {
-        $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
-        $loader->load('services.yml');
+        $loader->load('api.yaml');
+        $container->addResource(
+            new FileResource(__DIR__ . '/../Resources/config/services/api.yaml')
+        );
     }
 }

@@ -1,8 +1,8 @@
 {
     "name": "ezsystems/ezplatform-installer",
-    "description": "eZ Platform v2 Installer",
+    "description": "eZ Platform Installer",
     "homepage": "https://ezplatform.com/",
-    "license": "GPL-2.0",
+    "license": "GPL-2.0-only",
     "type": "ezplatform-bundle",
     "autoload": {
         "psr-4": {
@@ -12,10 +12,15 @@
     },
     "require": {
         "php": "^7.1",
-        "symfony/http-kernel": "^3.3"
+        "symfony/http-kernel": "^3.4",
+        "symfony/config": "^3.4",
+        "symfony/yaml": "^3.4",
+        "symfony/dependency-injection": "^3.4",
+        "ezsystems/ezpublish-kernel": "^7.5@dev",
+        "ezsystems/doctrine-dbal-schema": "^0.1@dev"
     },
     "require-dev": {
-        "friendsofphp/php-cs-fixer": "~2.7.1"
+        "friendsofphp/php-cs-fixer": "^2.14"
     },
     "scripts": {
         "fix-cs": "@php ./vendor/bin/php-cs-fixer fix -v --show-progress=estimating"

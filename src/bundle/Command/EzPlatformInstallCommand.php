@@ -85,7 +85,7 @@ class EzPlatformInstallCommand extends Command
             ->setDescription('eZ Platform Installer')
             ->addArgument(
                 'type',
-                InputArgument::REQUIRED,
+                InputArgument::OPTIONAL,
                 sprintf(
                     'The type of install. Available Installers: %s',
                     implode(', ', $availableInstallers)

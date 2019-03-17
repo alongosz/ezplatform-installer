@@ -11,7 +11,6 @@ namespace EzSystems\EzPlatformInstaller\Core\Installer;
 use EzSystems\EzPlatformInstaller\API\Installer;
 use eZ\Publish\Core\Base\Exceptions\InvalidArgumentException;
 use EzSystems\EzPlatformInstaller\SPI\Installer\Adapter;
-use Traversable;
 
 /**
  * Core Installer implementation.
@@ -24,11 +23,11 @@ class CoreInstaller implements Installer
     private $adapters = [];
 
     /**
-     * @param \Traversable|\EzSystems\EzPlatformInstaller\SPI\Installer\Adapter[] $adapters
+     * @param \iterable|\EzSystems\EzPlatformInstaller\SPI\Installer\Adapter[] $adapters
      *
      * @throws \eZ\Publish\API\Repository\Exceptions\InvalidArgumentException
      */
-    public function __construct(Traversable $adapters)
+    public function __construct(iterable $adapters)
     {
         foreach ($adapters as $adapter) {
             $adapterName = $this->getAdapterName($adapter);

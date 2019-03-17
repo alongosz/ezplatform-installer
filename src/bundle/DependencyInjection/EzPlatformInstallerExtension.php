@@ -7,6 +7,7 @@
 declare(strict_types=1);
 namespace EzSystems\EzPlatformInstallerBundle\DependencyInjection;
 
+use EzSystems\EzPlatformInstaller\SPI\Installer\Adapter as InstallerAdapter;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -33,14 +34,18 @@ class EzPlatformInstallerExtension extends Extension
             new FileLocator(__DIR__ . '/../Resources/config/services')
         );
 
+        $loader->load('api.yaml');
+        $container->addResource(
+            new FileResource(__DIR__ . '/../Resources/config/services/api.yaml')
+        );
+
         $loader->load('core.yaml');
         $container->addResource(
             new FileResource(__DIR__ . '/../Resources/config/services/core.yaml')
         );
 
-        $loader->load('api.yaml');
-        $container->addResource(
-            new FileResource(__DIR__ . '/../Resources/config/services/api.yaml')
-        );
+        $container
+            ->registerForAutoconfiguration(InstallerAdapter::class)
+            ->addTag('ezplatform.installer');
     }
 }

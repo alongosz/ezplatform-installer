@@ -4,8 +4,4 @@ services:
         autoconfigure: true
         public: false
 
-    _instanceof:
-        EzSystems\EzPlatformInstaller\SPI\Installer\Adapter:
-            tags: ['ezplatform.installer']
-
     EzSystems\EzPlatformInstaller\API\Installer: '@EzSystems\EzPlatformInstaller\Core\Installer\CoreInstaller'
